@@ -8,19 +8,20 @@
 #define MAX_OPCODE_SIZE 5
 #define MAX_OPERAND_TYPE_SIZE 3
 #define MAX_DATA_ARR_SIZE 10
-#define MAX_DIGITS_SIZE 5
+#define MAX_DIGITS_SIZE 10
 
 #define MAX_IMMEDIATE_OPR_VAL (32767)
 #define MIN_IMMEDIATE_OPR_VAL (-32768)
 
-enum boolean
+typedef enum boolean
 {
     FALSE, TRUE
-};
-enum guidance
+}boolean_t;
+
+typedef enum guidance
 {
-    EXTERN, ENTRY, NUM, STRING
-};
+    EXTERN, ENTRY, NUM_1, NUM_2, NUM_4, STRING
+}guidance_t;
 
 typedef enum instruction_type
 {
@@ -57,7 +58,7 @@ typedef struct sentence
 {
     int is_action; /* 1 if it's an action sentence, 0 if it's a guidance sentence */
     int is_store_command; /* 1 if it's .data/.string./.mat, 0 if it's extern or entry */
-    int guidance_command; /* enum: EXTERN / ENTRY / NUM (=DATA)  / STRING / MAT */
+    guidance_t guidance_command; /* enum: EXTERN / ENTRY / NUM (=DATA)  / STRING / MAT */
     int is_symbol;
     char symbol[MAX_SYMBOL_SIZE];
     char opcode[MAX_OPCODE_SIZE];

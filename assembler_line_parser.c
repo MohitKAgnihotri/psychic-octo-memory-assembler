@@ -232,11 +232,11 @@ int is_store_command(char* current_word)
 void detect_store_command(sentence* parsed, char* current_word)
 {
     if (strcmp_lower(current_word, "dh") == 0)
-        parsed->guidance_command = NUM;
+        parsed->guidance_command = NUM_2;
     else if (strcmp_lower(current_word, "dw") == 0)
-        parsed->guidance_command = NUM;
+        parsed->guidance_command = NUM_4;
     else if (strcmp_lower(current_word, "db") == 0)
-        parsed->guidance_command = NUM;
+        parsed->guidance_command = NUM_1;
     else if (strcmp_lower(current_word, "asciz") == 0)
         parsed->guidance_command = STRING;
     return;
@@ -436,17 +436,50 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
 
         new_position = get_next_member(temp_member, line, line_number, new_position, syntax_errors, &expecting_comma);
         number = atoi(temp_member);
-        if (number > 511 || number < -512)
+        if (parsed->guidance_command == NUM_1)
         {
-            fprintf(stderr,
-                "Error in line %d - the range of numbers that can be translated with assembler that works with 10 bits is from -512 to 511. Number %d cannot be stored.\n",
-                line_number,
-                number);
-            *syntax_errors = 1;
+            if (number > 127 || number < -128)
+            {
+                fprintf(stderr,
+                    "Error in line %d - the range of numbers that can be translated with assembler that works with 10 bits is from -512 to 511. Number %d cannot be stored.\n",
+                    line_number,
+                    number);
+                *syntax_errors = 1;
+            }
+            else
+            {
+                parsed->data_arr[j] = number;
+            }
         }
-        else
+        else if (parsed->guidance_command == NUM_2)
         {
-            parsed->data_arr[j] = number;
+            if (number > 32767 || number < -32768)
+            {
+                fprintf(stderr,
+                    "Error in line %d - the range of numbers that can be translated with assembler that works with 10 bits is from -512 to 511. Number %d cannot be stored.\n",
+                    line_number,
+                    number);
+                *syntax_errors = 1;
+            }
+            else
+            {
+                parsed->data_arr[j] = number;
+            }
+        }
+        else if (parsed->guidance_command == NUM_4)
+        {
+            if (number > 2147483647 || number < -2147483648)
+            {
+                fprintf(stderr,
+                    "Error in line %d - the range of numbers that can be translated with assembler that works with 10 bits is from -512 to 511. Number %d cannot be stored.\n",
+                    line_number,
+                    number);
+                *syntax_errors = 1;
+            }
+            else
+            {
+                parsed->data_arr[j] = number;
+            }
         }
         j++;
     }
@@ -469,10 +502,16 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
    variable in the sentence struct. */
 void parse_data_by_its_type(sentence* parsed, char* line, int last_position, int line_number, int* syntax_errors)
 {
-    if (parsed->guidance_command == NUM)
+    if ((parsed->guidance_command == NUM_1)
+        || (parsed->guidance_command == NUM_2)
+        || parsed->guidance_command == NUM_4)
+    {
         verify_and_save_numbers(parsed, line, last_position, line_number, syntax_errors);
+    }
     else if (parsed->guidance_command == STRING)
+    {
         verify_and_save_string(parsed, line, last_position, line_number, syntax_errors);
+    }
     return;
 }
 

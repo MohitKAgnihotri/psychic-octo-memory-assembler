@@ -69,7 +69,7 @@ registers registers_table[] = {
 
 int registers_table_length = sizeof(registers_table) / sizeof(registers_table[0]);
 
-char* saved_languages_words[] = { ".extern", ".entry", ".db",".dh","dw", ".asciz",
+char* saved_languages_words[] = { ".extern", ".entry", ".db",".dh",".dw", ".asciz",
                                                     "add", "sub", "and", "or", "nor", "move", "mvhi",
                                                     "mvlo", "addi", "subi", "andi", "ori", "nori", "bne",
                                                     "beq", "blt", "bgt", "lb", "sb", "lw", "sw",
