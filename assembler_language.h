@@ -4,24 +4,39 @@
 
 #define NUM_OF_SAVED_WORDS 64
 #define MAX_STRING_SIZE 80
-#define MAX_SYMBOL_SIZE 31
+#define MAX_SYMBOL_SIZE 128
+#define MAX_REGISTER_SIZE 6
 #define MAX_OPCODE_SIZE 5
 #define MAX_OPERAND_TYPE_SIZE 3
 #define MAX_DATA_ARR_SIZE 10
 #define MAX_DIGITS_SIZE 10
+#define MAX_FILE_NAME_SIZE 256
 
 #define MAX_IMMEDIATE_OPR_VAL (32767)
 #define MIN_IMMEDIATE_OPR_VAL (-32768)
 
 typedef enum boolean
 {
-    FALSE, TRUE
+    FALSE,
+    TRUE
 }boolean_t;
 
 typedef enum guidance
 {
-    EXTERN, ENTRY, NUM_1, NUM_2, NUM_4, STRING
+    EXTERN,
+    ENTRY,
+    NUM_1,
+    NUM_2,
+    NUM_4,
+    STRING
 }guidance_t;
+
+typedef enum symbol_type
+{
+    NONE,
+    DATA,
+    CODE
+}symbol_type_t;
 
 typedef enum instruction_type
 {
@@ -39,12 +54,11 @@ typedef enum operand_type
 
 /* struct for holding an opcode and it's binary value */
 typedef struct opcodes {
-  char* opcode;
-  char opcode_binary[6];
-  char func_binary[5];
-  int qty_of_supported_operands;
-    int source_operand_types[5];
-    int destination_operand_types[5];
+    char* opcode;
+    int opcode_binary;
+    int func_binary;
+    instruction_type_t instruction_type;
+    int qty_of_supported_operands;
 } opcodes;
 
 /* struct for holding a register and it's binary value */
@@ -53,6 +67,13 @@ typedef struct registers
     char register_name[4];
     char register_val[5];
 } registers;
+
+/* struct for holding the IC \ DC (code memory word address \ data memory word address), an array of 10 bits (in chars), and a pointer to the next struct of the same type */
+typedef struct memory_word {
+    int address;
+    char bits[32]; /* there are 11 places so '\0' can be added */
+    struct memory_word *next;
+} memory_word;
 
 typedef struct sentence
 {
@@ -63,19 +84,21 @@ typedef struct sentence
     char symbol[MAX_SYMBOL_SIZE];
     char opcode[MAX_OPCODE_SIZE];
     int num_of_operands; /* 0 if no operands, 1 if destiantion, 2 if if both destination and source*/
-    int source_operand_a_type;
-    int source_operand_b_type;
-    char dest_operand_type;
-    char operand_1[MAX_SYMBOL_SIZE]; /* for variables, registers, matrixes */
-    char operand_2[MAX_SYMBOL_SIZE]; /* for variables, registers, matrixes */
-    char operand_3[MAX_SYMBOL_SIZE]; /* for variables, registers, matrixes */
-    int immediate_operand_a; /* when we have "#" */
-    int immediate_operand_b; /* when we have "#" */
-    int immediate_operand_c; /* when we have "#" */
+    int operand_a_type;
+    int operand_b_type;
+    int operand_c_type;
+    char operand_a_val[MAX_REGISTER_SIZE]; /* for variables, registers, matrixes */
+    char operand_b_val[MAX_REGISTER_SIZE]; /* for variables, registers, matrixes */
+    char operand_c_val[MAX_REGISTER_SIZE]; /* for variables, registers, matrixes */
+    int operand_a; /* when we have "#" */
+    int operand_b; /* when we have "#" */
+    int operand_c; /* when we have "#" */
     char string[MAX_STRING_SIZE]; /* if guidance_command  = .string, check for it's value in this field */
     int data_arr[MAX_DATA_ARR_SIZE]; /* if guidance command = .data, check for the values in this array */
     int data_arr_num_of_params; /* how many numbers to take from data_arr */
     struct sentence* next;
 } sentence;
+
+memory_word * create_new_memory_word( void );
 
 #endif //PSYCHIC_OCTO_MEMORY_ASSEMBLER__ASSEMBLER_LANGUAGE_H

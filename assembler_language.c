@@ -1,33 +1,35 @@
+#include <malloc.h>
+#include <string.h>
 #include "assembler_language.h"
 
 opcodes opcodes_table[] = {
-    { "add", "000000", "00001", 2, {}, {}},
-    { "sub", "000000", "00010", 2, {}, {}},
-    { "and", "000000", "00011", 2, {}, {}},
-    { "or", "000000", "00100", 2, {}, {}},
-    { "nor", "000000", "00101", 2, {}, {}},
-    { "move", "000001", "00001", 2, {}, {}},
-    { "mvhi", "000001", "00010", 2, {}, {}},
-    { "mvlo", "000001", "00011", 2, {}, {}},
-    { "addi", "001010", "00000", 1, {}, {}},
-    { "subi", "001011", "00000", 1, {}, {}},
-    { "andi", "001100", "00000", 1, {}, {}},
-    { "ori", "001101", "00000", 1, {}, {}},
-    { "nori", "001110", "00000", 1, {}, {}},
-    { "bne", "001111", "00000", 1, {}, {}},
-    { "beq", "010000", "00000", 1, {}, {}},
-    { "blt", "010001", "00000", 1, {}, {}},
-    { "bgt", "010010", "00000", 1, {}, {}},
-    { "lb", "010011", "00000", 1, {}, {}},
-    { "sb", "010100", "00000", 1, {}, {}},
-    { "lw", "010101", "00000", 1, {}, {}},
-    { "sw", "010110", "00000", 1, {}, {}},
-    { "lh", "010111", "00000", 1, {}, {}},
-    { "sh", "011000", "00000", 1, {}, {}},
-    { "jmp", "011110", "00000", 1, {}, {}},
-    { "la", "011111", "00000", 1, {}, {}},
-    { "call", "100000", "00000", 1, {}, {}},
-    { "stop", "111111", "00000", 0, {}, {}},
+    { "add", 0, 1, ins_type_R,3},
+    { "sub", 0, 2, ins_type_R,3},
+    { "and", 0, 3, ins_type_R,3},
+    { "or", 0, 4, ins_type_R,3},
+    { "nor", 0, 5, ins_type_R,3},
+    { "move", 1, 1, ins_type_R,3},
+    { "mvhi", 1, 2, ins_type_R,3},
+    { "mvlo", 1, 3, ins_type_R,3},
+    { "addi", 10, 0, ins_type_I, 3},
+    { "subi", 11, 0, ins_type_I, 3},
+    { "andi", 12, 0, ins_type_I, 3},
+    { "ori", 13, 0, ins_type_I, 3},
+    { "nori", 14, 0, ins_type_I, 3},
+    { "bne", 15, 0, ins_type_I, 3},
+    { "beq", 16, 0, ins_type_I, 3},
+    { "blt", 17, 0, ins_type_I, 3},
+    { "bgt", 18, 0, ins_type_I, 3},
+    { "lb", 19, 0, ins_type_I, 3},
+    { "sb", 20, 0,ins_type_I, 3},
+    { "lw", 21, 0, ins_type_I, 3},
+    { "sw", 22, 0, ins_type_I, 3},
+    { "lh", 23, 0, ins_type_I, 3},
+    { "sh", 24, 0, ins_type_I, 3},
+    { "jmp", 30, 0, ins_type_J, 2},
+    { "la", 31, 0, ins_type_J, 2},
+    { "call", 32, 0, ins_type_J, 2},
+    { "stop", 63, 0, ins_type_J, 0},
 };
 
 int opcode_table_length = sizeof(opcodes_table) / sizeof(opcodes_table[0]);
@@ -81,6 +83,21 @@ char* saved_languages_words[] = { ".extern", ".entry", ".db",".dh",".dw", ".asci
                                                     "$25", "$26", "$27", "$28", "$29", "$30", "$31" };
 
 int saved_languages_words_length = sizeof(saved_languages_words) / sizeof(saved_languages_words[0]);
+
+memory_word * create_new_memory_word( void)
+{
+    memory_word * new_memory_word = (memory_word*)malloc(sizeof(memory_word));
+    if (!new_memory_word)
+    {
+        fprintf(stderr, "ERROR: Memory allocation failed");
+        return NULL;
+    }
+    new_memory_word->address = 0;
+    memset(new_memory_word->bits, 0, 32);
+    new_memory_word->next = NULL;
+
+    return new_memory_word;
+}
 
 
 

@@ -13,8 +13,6 @@ extern int opcode_table_length;
 extern int saved_languages_words_length;
 extern opcodes opcodes_table[];
 
-
-
 /* init_sentence -
    receives: the pointer to the new sentence declared.
    The function initiates all values to 0, empty or null in order to avoid garbage in fields. */
@@ -27,15 +25,15 @@ void init_sentence(sentence* parsed)
     strcpy(parsed->symbol, "\0");
     strcpy(parsed->opcode, "\0");
     parsed->num_of_operands = -1;
-    parsed->source_operand_a_type = 0;
-    parsed->source_operand_b_type = 0;
-    parsed->dest_operand_type = 0;
-    strcpy(parsed->operand_1, "\0");
-    strcpy(parsed->operand_2, "\0");
-    strcpy(parsed->operand_3, "\0");
-    parsed->immediate_operand_a = 0;
-    parsed->immediate_operand_b = 0;
-    parsed->immediate_operand_c = 0;
+    parsed->operand_a_type = 0;
+    parsed->operand_b_type = 0;
+    parsed->operand_c_type = 0;
+    strcpy(parsed->operand_a_val, "\0");
+    strcpy(parsed->operand_b_val, "\0");
+    strcpy(parsed->operand_c_val, "\0");
+    parsed->operand_a = 0;
+    parsed->operand_b = 0;
+    parsed->operand_c = 0;
     strcpy(parsed->string, "\0");
 
     for (int i = 0; i < MAX_DATA_ARR_SIZE; i++)
@@ -45,8 +43,6 @@ void init_sentence(sentence* parsed)
     parsed->data_arr_num_of_params = 0;
     parsed->next = NULL;
 }
-
-
 
 int is_command(char* curr_word)
 {
@@ -256,10 +252,9 @@ int get_next_member(char* temp_member,
     int new_position = skip_spaces(line, last_position);
     int number_ended = 0; /*indication that no more digits are expected (for 3,4 4,5 example)*/
 
-    while (line[new_position] != '\0' && line[new_position] != '\n' && line[new_position] != EOF
+    while (line[new_position] != '\0' && line[new_position] != '\n' && line[new_position] != '\r' && line[new_position] != EOF
            && line[new_position] != '\t')
     {
-
         /*handle:
         2. add flag 'number ended' and prevent number after space
         3. check if finished with comma in outer func*/
@@ -390,7 +385,7 @@ void verify_and_save_string(sentence* parsed, char* line, int last_position, int
         fprintf(stderr, "Error in line %d - '\"' expected at the end of the string\n", line_number);
         *syntax_errors = 1;
     }
-    if (curr_char == '\0' && curr_char == EOF && curr_char == '\n')
+    if (curr_char == '\0' && curr_char == EOF && curr_char == '\r' && curr_char == '\n')
         return;
 
     last_position++;
@@ -404,7 +399,7 @@ void verify_and_save_string(sentence* parsed, char* line, int last_position, int
     }
 
     /*5 - end of line/file*/
-    if (curr_char != '\0' && curr_char != EOF && curr_char != '\n')
+    if (curr_char != '\0' && curr_char != EOF && curr_char != '\r' && curr_char != '\n')
     {
         fprintf(stderr, "Error in line %d -  unexpected characters after string ended\n", line_number);
         *syntax_errors = 1;
@@ -429,7 +424,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
     int j = 0;
     int number;
 
-    while (line[new_position] != '\0' && line[new_position] != '\n' && line[new_position] != EOF
+    while (line[new_position] != '\0' && line[new_position] != '\n' && line[new_position] != '\r' && line[new_position] != EOF
            && j < MAX_DATA_ARR_SIZE
            && line[new_position] != '\t')
     {
@@ -551,9 +546,9 @@ int detect_opcode(char* current_word)
 receives: a char.
 returns: 1 if the char is a number between 0 to 7, 0 if not.
 */
-int valid_reg_digit(char *digit)
+int valid_reg_digit(char* digit)
 {
-    if(atoi(digit) < 32)
+    if (atoi(digit) < 32)
     {
         return TRUE;
     }
@@ -573,7 +568,7 @@ void detect_operand(char operand_position,
     int* temp_operand_type)
 {
     // Check if it's a positive number or negative number
-    if ((isdigit(temp_word[0])) ||  (temp_word[0] == '-') ||  (temp_word[0] == '+'))
+    if ((isdigit(temp_word[0])) || (temp_word[0] == '-') || (temp_word[0] == '+'))
     {
         *temp_operand_type = opr_type_immediate;
         *operands_in_sentence = *operands_in_sentence + 1;
@@ -585,20 +580,20 @@ void detect_operand(char operand_position,
         }
         else if (operand_position == 'a') /* if we are checking the operand in the 1st place after the opcode */
         {
-            parsed->immediate_operand_a = atoi(temp_word);
-            parsed->source_operand_a_type = opr_type_immediate;
+            parsed->operand_a = atoi(temp_word);
+            parsed->operand_a_type = opr_type_immediate;
         }
         else if (operand_position == 'b') /* if we are checking the operand in the 1st place after the opcode */
         {
-            parsed->immediate_operand_b = atoi(temp_word);
-            parsed->source_operand_b_type = opr_type_immediate;
+            parsed->operand_b = atoi(temp_word);
+            parsed->operand_b_type = opr_type_immediate;
         }
         else /* if we are checking the operand in the 2nd place after the opcode */
         {
-            parsed->immediate_operand_b = atoi(temp_word);
-            parsed->dest_operand_type =  opr_type_immediate;
+            parsed->operand_b = atoi(temp_word);
+            parsed->operand_b_type = opr_type_immediate;
         }
-        if ((atoi(temp_word) > MAX_IMMEDIATE_OPR_VAL  || atoi(temp_word) < MIN_IMMEDIATE_OPR_VAL))
+        if ((atoi(temp_word) > MAX_IMMEDIATE_OPR_VAL || atoi(temp_word) < MIN_IMMEDIATE_OPR_VAL))
         {
             fprintf(stderr, "Error in line %d - the value after an immediate operand must be a number\n", line_number);
             *syntax_errors = TRUE;
@@ -607,48 +602,51 @@ void detect_operand(char operand_position,
     }
     else if (is_symbol_operand(temp_word, line_number, syntax_errors, FALSE, FALSE))
     {
-        *temp_operand_type = opr_type_immediate;
+        *temp_operand_type = opr_type_direct;
         *operands_in_sentence = *operands_in_sentence + 1;
         if (operand_position == 'a')
         {
-            strcpy(parsed->operand_1, temp_word);
-            parsed->source_operand_a_type =  opr_type_immediate;
+            strcpy(parsed->operand_a_val, temp_word);
+            parsed->operand_a_type = opr_type_direct;
         }
         else if (operand_position == 'b')
         {
-            strcpy(parsed->operand_2, temp_word);
-            parsed->source_operand_a_type =  opr_type_immediate;
+            strcpy(parsed->operand_b_val, temp_word);
+            parsed->operand_b_type = opr_type_direct;
         }
-        else
+        else if (operand_position == 'c')
         {
-            strcpy(parsed->operand_3, temp_word);
-            parsed->dest_operand_type =  opr_type_immediate;
+            strcpy(parsed->operand_c_val, temp_word);
+            parsed->operand_c_type = opr_type_direct;
         }
     }
     else if (temp_word[0] == '$' && valid_reg_digit(&temp_word[1]))
     {
         if (strlen(temp_word) >= 2 && strlen(temp_word) <= 3)
         {
-            *temp_operand_type = opr_type_direct;
+            *temp_operand_type = opr_type_collector;
             *operands_in_sentence = *operands_in_sentence + 1;
             if (operand_position == 'a')
             {
-                strcpy(parsed->operand_1, temp_word);
-                parsed->source_operand_a_type =  opr_type_direct;
+                strcpy(parsed->operand_a_val, temp_word);
+                parsed->operand_a_type = opr_type_collector;
+                parsed->operand_a = atoi(&temp_word[1]);
+
             }
             else if (operand_position == 'b')
             {
-                strcpy(parsed->operand_2, temp_word);
-                parsed->source_operand_b_type =  opr_type_direct;
+                strcpy(parsed->operand_b_val, temp_word);
+                parsed->operand_b_type = opr_type_collector;
+                parsed->operand_b = atoi(&temp_word[1]);
             }
             else if (operand_position == 'c')
             {
-                strcpy(parsed->operand_3, temp_word);
-                parsed->dest_operand_type =  opr_type_direct;
+                strcpy(parsed->operand_c_val, temp_word);
+                parsed->operand_c_type = opr_type_collector;
+                parsed->operand_c = atoi(&temp_word[1]);
             }
         }
     }
-
     return;
 }
 
@@ -668,14 +666,14 @@ int get_next_operand(char* current_word, char* line, int last_position)
         return position;
     }
 
-    if (line[position] == '\n' || line[position] == EOF || line[position] == '\0')
+    if (line[position] == '\r' || line[position] == '\n' || line[position] == EOF || line[position] == '\0')
     {
         current_word[i] = '\0';
         return position;
     }
 
-    while (line[position] != ',' && line[position] != '\n' && line[position] != ' ' && line[position] != EOF
-    && line[position] != '\0' && line[position] != '\t')
+    while (line[position] != ',' && line[position] != '\r' && line[position] != '\n' && line[position] != ' ' && line[position] != EOF
+           && line[position] != '\0' && line[position] != '\t')
     {
         current_word[i] = line[position];
         i++;
@@ -692,11 +690,12 @@ int get_next_operand(char* current_word, char* line, int last_position)
     return position;
 }
 
+#if 0
 /* check_destination_address_type -
-	receives: the current external iteration and the operand type.
-	The function checks over the operands in the opcodes table that the type is one of it's destination address types.
-	returns: true if supported, false if not.
-	*/
+    receives: the current external iteration and the operand type.
+    The function checks over the operands in the opcodes table that the type is one of it's destination address types.
+    returns: true if supported, false if not.
+    */
 int check_destination_address_type(int ext_iteration, int op_type)
 {
     int j;
@@ -711,9 +710,9 @@ int check_destination_address_type(int ext_iteration, int op_type)
 }
 
 /* check_source_address_type -
-	receives: the current external iteration and the operand type.
-	The function checks over the operands in the opcodes table that the type is one of it's destination address types.
-	returns: true if supported, false if not.*/
+    receives: the current external iteration and the operand type.
+    The function checks over the operands in the opcodes table that the type is one of it's destination address types.
+    returns: true if supported, false if not.*/
 
 int check_source_address_type(int ext_iteration, int op_type)
 {
@@ -727,6 +726,7 @@ int check_source_address_type(int ext_iteration, int op_type)
 
     return FALSE;
 }
+#endif
 
 /* validate_operand_for_opcode -
 	receives: the sentence struct, the type of operand in source, the type of operand in destination (-999 should be passed if empty),
@@ -741,7 +741,7 @@ int validate_operand_for_opcode(sentence* parsed,
     int qty_of_ops,
     int line_number,
     int* syntax_errors)
-    {
+{
     int i;
     int operand_error = 0;
 
@@ -752,7 +752,7 @@ int validate_operand_for_opcode(sentence* parsed,
             if (opcodes_table[i].qty_of_supported_operands < qty_of_ops)
             {
                 fprintf(stderr, "Error in line %d - too many operands for the opcode %s\n", line_number, parsed
-                ->opcode);
+                    ->opcode);
                 *syntax_errors = 1;
                 return FALSE;
             }
@@ -762,9 +762,9 @@ int validate_operand_for_opcode(sentence* parsed,
                 *syntax_errors = 1;
                 return FALSE;
             }
-
+#if 0
             if (qty_of_ops == 1) /* if there is a single operand, it is categorized as destination operand */
-                {
+            {
                 if (check_destination_address_type(i, op_a) == FALSE)
                 {
                     fprintf(stderr,
@@ -773,29 +773,30 @@ int validate_operand_for_opcode(sentence* parsed,
                         parsed->opcode);
                     return FALSE;
                 }
-                }
-                else if (qty_of_ops == 2)
+            }
+            else if (qty_of_ops == 2)
+            {
+                if (check_source_address_type(i, op_a) == FALSE)
                 {
-                    if (check_source_address_type(i, op_a) == FALSE)
-                    {
-                        fprintf(stderr,
-                            "Error in line %d - the address type of the source operand doesn't match to the opcode %s\n",
-                            line_number,
-                            parsed->opcode);
-                        *syntax_errors = 1;
-                        operand_error = 1;
-                    }
-
-                    if (check_destination_address_type(i, op_b) == FALSE)
-                    {
-                        fprintf(stderr,
-                            "Error in line %d - the address type of the destination operand doesn't match to the opcode %s\n",
-                            line_number,
-                            parsed->opcode);
-                        *syntax_errors = 1;
-                        return FALSE;
-                    }
+                    fprintf(stderr,
+                        "Error in line %d - the address type of the source operand doesn't match to the opcode %s\n",
+                        line_number,
+                        parsed->opcode);
+                    *syntax_errors = 1;
+                    operand_error = 1;
                 }
+
+                if (check_destination_address_type(i, op_b) == FALSE)
+                {
+                    fprintf(stderr,
+                        "Error in line %d - the address type of the destination operand doesn't match to the opcode %s\n",
+                        line_number,
+                        parsed->opcode);
+                    *syntax_errors = 1;
+                    return FALSE;
+                }
+            }
+#endif
         }
     }
 
@@ -803,7 +804,7 @@ int validate_operand_for_opcode(sentence* parsed,
         return FALSE;
     else
         return TRUE;
-    }
+}
 
 /* verify_operands -
   receives: the struct of sentence type, the last position in the line, the line number and a pointer to syntax errors.
@@ -834,7 +835,6 @@ void verify_operands(sentence* parsed, char* line, int last_position, int line_n
 
 
     /*detect 1st operand */
-
     detect_operand('a', parsed, temp_word, line_number, syntax_errors, &operands_in_sentence, &temp_operand_type_a);
 
     /* finish pass over 1st operand */
@@ -881,7 +881,7 @@ void verify_operands(sentence* parsed, char* line, int last_position, int line_n
         detect_operand('c', parsed, temp_word, line_number, syntax_errors, &operands_in_sentence, &temp_operand_type_b);
     }
 
-    if (line[new_position] != '\n' && line[new_position] != EOF && line[new_position] != '\0')
+    if (line[new_position] != '\r' && line[new_position] != '\n' && line[new_position] != EOF && line[new_position] != '\0')
     {
         fprintf(stderr, "Error in line %d - end of line expected after matching number of operands\n", line_number);
         return;
@@ -903,9 +903,9 @@ void verify_operands(sentence* parsed, char* line, int last_position, int line_n
 
         strcpy(parsed->dest_operand_type, parsed->source_operand_type); /* 3 places so '\0' can be added - miunim */
         strcpy(parsed->source_operand_type, "");
-        strcpy(parsed->operand_2, parsed->operand_1);  /* for variables, registers, matrixes */
-        strcpy(parsed->operand_1, "");
-        parsed->immediate_operand_b = parsed->immediate_operand_a; /* when we have "#" */
+        strcpy(parsed->operand_b_val, parsed->operand_a_val);  /* for variables, registers, matrixes */
+        strcpy(parsed->operand_a_val, "");
+        parsed->operand_b = parsed->operand_a; /* when we have "#" */
         strcpy(parsed->matrix_row_operand_b, parsed->matrix_row_operand_a); /* if we have M1[r1][r2] then r1 goes here */
         strcpy(parsed->matrix_col_operand_a, "");
         if (validate_operand_for_opcode(parsed,
@@ -954,9 +954,8 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
         return NULL;
 
     init_sentence(parsed);
-
+    line[strcspn(line, "\r")] = '\n';
     last_position = get_next_word(current_word, line, -1);
-
 
     /*
      * Example of prompt: '.dh', '.dw', '.db', '.asciz'
@@ -1017,4 +1016,6 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
         strcpy(parsed->opcode, current_word);
         verify_operands(parsed, line, last_position, line_number, syntax_errors);
     }
+
+    return parsed;
 }
