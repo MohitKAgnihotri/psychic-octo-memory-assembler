@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     {
         char* filename = argv[i];
         printf("INFO: Running assembler on file %s\n", filename);
-        if (assembler_execute_first_pass(filename))
+        if (assembler_execute_first_pass(filename) != TRUE)
         {
             printf("INFO: First pass run completed successfully on file %s\n", filename);
             printf("INFO: Running second pass on file %s\n", filename);
@@ -65,7 +65,6 @@ int main(int argc, char* argv[])
         {
             fprintf(stderr, "ERROR: Errors found in first pass. Second pass will not be run.\n");
         }
-        fclose(fd);
     }
 
     return 0;

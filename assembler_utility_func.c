@@ -1,12 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <malloc.h>
 #include "assembler_language.h"
 #include "assembler_utility_func.h"
 
-/* skip_spaces -
-receives: line and last position.
-returns the last postion where no empty spaces or \t are found. */
 int skip_spaces(char* line, int last_position)
 {
     while (line[last_position] == ' ' || line[last_position] == '\t')
@@ -14,9 +12,6 @@ int skip_spaces(char* line, int last_position)
     return last_position;
 }
 
-/* line_is_empty -
-   receives: the line to parse.
-   returns true is the line is empty, or false if not. */
 int line_is_empty(char* line)
 {
     int i;
@@ -31,9 +26,6 @@ int is_current_word_empty(char* word)
     return strlen(word) == 0 ? 1 : 0;
 }
 
-/* right_symbol_identation -
-	receives: the line to parse.
-	returns true of it starts with an empty place. */
 int right_symbol_identation(char* line)
 {
     return !(line[0] == ' ' || line[0] == '\t');
@@ -64,15 +56,12 @@ int strcmp_lower(char* word1, char* word2)
     return strcmp(word1_lower, word2);
 }
 
-/* Converts a decimal number to any other base. */
 int convert_dec_to_another_base(int number,int base){
     if(number == 0 || base==10)
         return number;
     return (number % base) + 10*convert_dec_to_another_base(number / base, base);
 }
 
-/* Converts a decimal number to a binary number with padded zeroes up to x bits.
-* When calling the function array of chars sized number of bits + 1 (for '\0') should be provided (char * result) */
 void convert_dec_to_x_bit_binary(int num, int bits, char* result)
 {
     int i = bits - 1;
@@ -114,11 +103,11 @@ void convert_dec_to_x_bit_binary(int num, int bits, char* result)
     }
 }
 
-/* Coverts an alphabetic char into its binary value using 10 bits (with zero padding)
-* When calling the function array of chars sized number of bits + 1 (for '\0') should be provided (char * result) */
 void convert_ascii_value_to_10_bit_binary(char c, char* result)
 {
-    convert_dec_to_x_bit_binary(c, 11, result);
+    char array[9] = {0};
+    convert_dec_to_x_bit_binary(c, 9, array);
+    reverse_cpy(result,array,8);
 }
 
 void combine_filename_with_new_file_extension(char * filename, char * output_filename, char * extension)
@@ -133,7 +122,34 @@ void combine_filename_with_new_file_extension(char * filename, char * output_fil
     strcpy(output_filename, extension_filename);
 }
 
-void add_line_to_file_ext(FILE * fp, char * column_a, int column_b)
+void add_line_to_file(FILE * fp, char * val, int address)
 {
-    fprintf(fp, "%s    %.4d\n", column_a, column_b);
+    fprintf(fp, "%s    %.4d\n", val, address);
+}
+
+
+void reverse_cpy(char *restrict dst, const char *restrict src, size_t n)
+{
+    size_t i;
+    for (i=0; i < n; ++i)
+        dst[n-1-i] = src[i];
+
+}
+
+int * convert_to_hex(char * string)
+{
+    int *hex_val = malloc(sizeof(int) * 4);
+    if (!hex_val)
+        return NULL;
+    else
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            hex_val[0] = hex_val[0]  + ((string[i] - '0') << i);
+            hex_val[1] = hex_val[1]  + ((string[i+8] - '0') << i);
+            hex_val[2] = hex_val[2]  + ((string[i+16] - '0') << i);
+            hex_val[3] = hex_val[3]  + ((string[i+24] - '0') << i);
+        }
+    }
+    return hex_val;
 }

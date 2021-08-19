@@ -1,9 +1,8 @@
 
+#include "assembler_language.h"
+
 #ifndef _ASSEMBLER_SYMBOL_TABLE_H_
 #define _ASSEMBLER_SYMBOL_TABLE_H_
-
-
-#define MAX_SYMBOL_SIZE 31
 
 typedef struct symbol_line {
     char symbol[MAX_SYMBOL_SIZE];

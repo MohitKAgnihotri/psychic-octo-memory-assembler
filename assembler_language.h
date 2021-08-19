@@ -40,9 +40,13 @@ typedef enum symbol_type
 
 typedef enum instruction_type
 {
-    ins_type_R,
-    ins_type_I,
-    ins_type_J,
+    ins_type_R_1, // add, sub, and, or, nor
+    ins_type_R_2, // move, mvhi, mvlo
+    ins_type_I_1, // addi, subi, andi, ori, nori, lh, lb, bw, sw, sb, sh
+    ins_type_I_2, // blt, bne, blt, bgt
+    ins_type_J_1, // jmp instruction
+    ins_type_J_2, // la, call
+    ins_type_S,   // stop
 } instruction_type_t;
 
 typedef enum operand_type
@@ -65,13 +69,14 @@ typedef struct opcodes {
 typedef struct registers
 {
     char register_name[4];
-    char register_val[5];
+    char register_val[6];
 } registers;
 
 /* struct for holding the IC \ DC (code memory word address \ data memory word address), an array of 10 bits (in chars), and a pointer to the next struct of the same type */
 typedef struct memory_word {
+    int number_of_valid_bytes;
     int address;
-    char bits[32]; /* there are 11 places so '\0' can be added */
+    char bits[32];
     struct memory_word *next;
 } memory_word;
 
@@ -84,15 +89,9 @@ typedef struct sentence
     char symbol[MAX_SYMBOL_SIZE];
     char opcode[MAX_OPCODE_SIZE];
     int num_of_operands; /* 0 if no operands, 1 if destiantion, 2 if if both destination and source*/
-    int operand_a_type;
-    int operand_b_type;
-    int operand_c_type;
-    char operand_a_val[MAX_REGISTER_SIZE]; /* for variables, registers, matrixes */
-    char operand_b_val[MAX_REGISTER_SIZE]; /* for variables, registers, matrixes */
-    char operand_c_val[MAX_REGISTER_SIZE]; /* for variables, registers, matrixes */
-    int operand_a; /* when we have "#" */
-    int operand_b; /* when we have "#" */
-    int operand_c; /* when we have "#" */
+    int operand_type[3];
+    char operand_val[3][MAX_REGISTER_SIZE]; /* for variables, registers, matrixes */
+    int operand[3]; /* when we have "#" */
     char string[MAX_STRING_SIZE]; /* if guidance_command  = .string, check for it's value in this field */
     int data_arr[MAX_DATA_ARR_SIZE]; /* if guidance command = .data, check for the values in this array */
     int data_arr_num_of_params; /* how many numbers to take from data_arr */
