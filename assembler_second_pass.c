@@ -46,7 +46,7 @@ extern int registers_table_length;
 void encode_instruction_R1(sentence* curr, memory_word* word)
 {
     int j = 0;
-    // 3 operands are expected
+    /* 3 operands are expected */
     if (curr->operand_type[0] == opr_type_collector)
     {
         for ( j= 0; j < registers_table_length; j++)
@@ -86,7 +86,7 @@ void encode_instruction_R1(sentence* curr, memory_word* word)
 void encode_instruction_R2(sentence* curr, memory_word* word)
 {
     int j = 0;
-    // 2 operands are expected
+    /* 2 operands are expected */
     if (curr->operand_type[0] == opr_type_collector)
     {
         for (j = 0; j < registers_table_length; j++)
@@ -111,14 +111,14 @@ void encode_instruction_R2(sentence* curr, memory_word* word)
         }
     }
 
-    // Set rd to  all zeros
+    /* Set rd to  all zeros */
     memcpy(&word->bits[16], "00000", 5);
 }
 
 void encode_instruction_I1(sentence* curr, memory_word* word)
 {
     int j = 0;
-    // 3 operands are expected
+    /*3 operands are expected */
     if (curr->operand_type[0] == opr_type_collector)
     {
         for (j = 0; j < registers_table_length; j++)
@@ -154,7 +154,7 @@ void encode_instruction_I1(sentence* curr, memory_word* word)
 void encode_instruction_I2(sentence* curr, memory_word* word)
 {
     int j = 0;
-    // 3 operands are expected
+    /* 3 operands are expected */
     if (curr->operand_type[0] == opr_type_collector)
     {
         for (j = 0; j < registers_table_length; j++)
@@ -200,7 +200,8 @@ void encode_instruction_I2(sentence* curr, memory_word* word)
 void encode_instruction_J1_J2(sentence* curr, memory_word* word)
 {
     int j = 0;
-    // 3 operands are expected
+    symbol_line* sl = NULL;
+    /* 3 operands are expected */
     if (curr->operand_type[0] == opr_type_collector)
     {
         word->bits[25] = '1';
@@ -217,7 +218,7 @@ void encode_instruction_J1_J2(sentence* curr, memory_word* word)
     else if (curr->operand_type[0] == opr_type_direct)
     {
         word->bits[25] = '0';
-        symbol_line* sl = get_symbol_line_from_symbol_table(curr->operand_val[0]);
+        sl = get_symbol_line_from_symbol_table(curr->operand_val[0]);
         if (sl)
         {
             if (sl->is_extern)
@@ -315,6 +316,12 @@ int assembler_execute_second_pass(char* filename)
     char extern_filename[MAX_FILE_NAME_SIZE] = { 0 };
     char intern_filename[MAX_FILE_NAME_SIZE] = { 0 };
 
+    memory_word* current_memory_word = NULL;
+    memory_word* curr_data_head = NULL;
+    char* buffer = NULL;
+    int index = 0;
+    int max_bytes_to_print = 0;
+
     sentence* current_sentence = sentence_head;
 
     ic_second_pass = CODE_TABLE_START_ADDRESS;
@@ -368,7 +375,7 @@ int assembler_execute_second_pass(char* filename)
     }
 
     fprintf(object_filename_fp, "%d %d \n", ic_second_pass - 100, DC);
-    memory_word* current_memory_word = code_head;
+    current_memory_word = code_head;
     while (current_memory_word)
     {
         int* test = convert_to_hex(current_memory_word->bits);
@@ -378,10 +385,10 @@ int assembler_execute_second_pass(char* filename)
     }
 
     /*Add Data to the binary image*/
-    memory_word* curr_data_head = data_head;
+    curr_data_head = data_head;
 
-    char* buffer = malloc(sizeof(char) * DC * 8);
-    int index = 0;
+    buffer = malloc(sizeof(char) * DC * 8);
+    index = 0;
     while (curr_data_head)
     {
         memcpy(&buffer[index * 8], curr_data_head->bits, curr_data_head->number_of_valid_bytes * 8);
@@ -390,7 +397,7 @@ int assembler_execute_second_pass(char* filename)
     }
 
     index = 0;
-    int max_bytes_to_print = DC;
+    max_bytes_to_print = DC;
     while (index < (DC * 8))
     {
         int* test = convert_to_hex(&buffer[index]);
@@ -430,4 +437,5 @@ int assembler_execute_second_pass(char* filename)
     {
         remove(intern_filename);
     }
+    return 0;
 }

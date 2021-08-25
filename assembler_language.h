@@ -40,20 +40,20 @@ typedef enum symbol_type
 
 typedef enum instruction_type
 {
-    ins_type_R_1, // add, sub, and, or, nor
-    ins_type_R_2, // move, mvhi, mvlo
-    ins_type_I_1, // addi, subi, andi, ori, nori, lh, lb, bw, sw, sb, sh
-    ins_type_I_2, // blt, bne, blt, bgt
-    ins_type_J_1, // jmp instruction
-    ins_type_J_2, // la, call
-    ins_type_S,   // stop
+    ins_type_R_1, /* add, sub, and, or, nor */
+    ins_type_R_2, /* move, mvhi, mvlo */
+    ins_type_I_1, /* addi, subi, andi, ori, nori, lh, lb, bw, sw, sb, sh */
+    ins_type_I_2, /* blt, bne, blt, bgt */
+    ins_type_J_1, /* jmp instruction */
+    ins_type_J_2, /* la, call */
+    ins_type_S   /* stop */
 } instruction_type_t;
 
 typedef enum operand_type
 {
   opr_type_collector,
   opr_type_immediate,
-  opr_type_direct,
+  opr_type_direct
 }operand_type_t;
 
 /* struct for holding an opcode and it's binary value */
@@ -100,4 +100,4 @@ typedef struct sentence
 
 memory_word * create_new_memory_word( void );
 
-#endif //PSYCHIC_OCTO_MEMORY_ASSEMBLER__ASSEMBLER_LANGUAGE_H
+#endif

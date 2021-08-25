@@ -4,4 +4,4 @@
 
 int assembler_execute_first_pass(char *filename);
 
-#endif //PSYCHIC_OCTO_MEMORY_ASSEMBLER__ASSEMBLER_FIRST_PASS_H
+#endif

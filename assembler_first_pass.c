@@ -20,7 +20,7 @@ sentence* sentence_tail;
    The function increases IC according the number of memory words each type of operand requires. */
 void increase_IC_according_sentence(sentence* curr, int* IC)
 {
-    // ALl instruction are coded in 32 bits. Thus we need to increase the instruction count by 4
+    /* ALl instruction are coded in 32 bits. Thus we need to increase the instruction count by 4 */
     *IC += 4;
 }
 

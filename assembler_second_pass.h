@@ -3,4 +3,4 @@
 
 int assembler_execute_second_pass(char *filename);
 
-#endif //PSYCHIC_OCTO_MEMORY_ASSEMBLER__ASSEMBLER_SECOND_PASS_H
+#endif

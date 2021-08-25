@@ -10,7 +10,7 @@ symbol_line* symbol_tail;
 
 void assembler_symbol_table_init()
 {
-    // For now this is an empty function
+
 }
 
 symbol_line* get_symbol_line_from_symbol_table(char* symbol)

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(psychic_octo_memory_assembler C)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 90)
 set(CMAKE_C_FLAGS "-Wall -ansi -pedantic -g3 -O0")
 
 add_executable(psychic_octo_memory_assembler assembler.c assembler_language.c

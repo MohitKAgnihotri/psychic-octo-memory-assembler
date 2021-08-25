@@ -17,4 +17,4 @@ int assembler_symbol_exists(char *current_symbol);
 void increase_DC_symbol_address_by_IC_offset(const int *IC);
 symbol_line * get_symbol_line_from_symbol_table(char * symbol);
 
-#endif //_ASSEMBLER_SYMBOL_TABLE_H_
+#endif
