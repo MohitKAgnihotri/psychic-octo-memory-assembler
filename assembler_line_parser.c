@@ -226,7 +226,10 @@ void detect_store_command(sentence* parsed, char* current_word)
     else if (strcmp_lower(current_word, "db") == 0)
         parsed->guidance_command = NUM_1;
     else if (strcmp_lower(current_word, "asciz") == 0)
+    {
         parsed->guidance_command = STRING;
+    }
+
     return;
 }
 
@@ -372,6 +375,13 @@ void verify_and_save_string(sentence* parsed, char* line, int last_position, int
     parsed->string[str_idx] = '\0';
 
 
+    if (str_idx > 79)
+    {
+        fprintf(stderr, "Error in line %d - Line exceeded max allowed length \n", line_number);
+        *syntax_errors = 1;
+        return;
+    }
+
     /*4 - "*/
     if (curr_char != '\"')
     {
@@ -416,12 +426,21 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
     int new_position = skip_spaces(line, last_position); /* initializes position */
     int j = 0;
     int number;
+    int number_of_numbers = 0;
 
     while (line[new_position] != '\0' && line[new_position] != '\n' && line[new_position] != '\r'
            && line[new_position] != EOF
            && j < MAX_DATA_ARR_SIZE
            && line[new_position] != '\t')
     {
+
+        number_of_numbers++;
+        if (number_of_numbers > 70)
+        {
+            fprintf(stderr, "Error: Number of data parameters is greater than 80 \n", line_number);
+            *syntax_errors = 1;
+            exit(-1);
+        }
 
         new_position = get_next_member(temp_member, line, line_number, new_position, syntax_errors, &expecting_comma);
         number = atoi(temp_member);
@@ -449,6 +468,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
                     line_number,
                     number);
                 *syntax_errors = 1;
+                return;
             }
             else
             {
@@ -464,6 +484,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
                     line_number,
                     number);
                 *syntax_errors = 1;
+                return;
             }
             else
             {
@@ -479,6 +500,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
     {
         fprintf(stderr, "Error in line %d - missing data parameters\n", line_number);
         *syntax_errors = 1;
+        return;
     }
 
     parsed->data_arr_num_of_params = j;
@@ -789,7 +811,7 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
 
     last_position = skip_spaces(line, 0);
 
-    last_position = get_next_word(current_word, line, last_position ? last_position :  -1);
+    last_position = get_next_word(current_word, line, last_position ? last_position -1 :  -1);
 
     /*
      * Example of prompt: '.dh', '.dw', '.db', '.asciz'

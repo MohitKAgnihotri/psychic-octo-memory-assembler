@@ -103,7 +103,7 @@ void add_num_to_data_table(sentence* curr, int* DC, int num_size)
         }
         *DC += num_size;
     }
-    data_tail->next = NULL;
+    //data_tail->next = NULL;
     return; /*added_mem_words;*/
 }
 

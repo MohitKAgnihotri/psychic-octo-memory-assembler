@@ -16,9 +16,7 @@ int line_is_empty(char* line)
 {
     int i;
     i = skip_spaces(line, 0);
-
     return (line[i] == '\n' || line[i] == EOF);
-
 }
 
 int is_current_word_empty(char* word)

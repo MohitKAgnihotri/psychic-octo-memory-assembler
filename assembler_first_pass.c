@@ -42,6 +42,12 @@ int assembler_execute_first_pass(char* filename)
 
     while (fgets(line, LINE_LENGTH, fd))
     {
+        /* Check if the last line was parsed without errors*/
+        if (syntax_error == TRUE)
+        {
+            return syntax_error;
+        }
+
         line_number++;
         if (line[0] == ';')
         {
