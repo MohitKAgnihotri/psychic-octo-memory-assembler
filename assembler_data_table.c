@@ -16,7 +16,6 @@ void add_string_to_data_table(sentence* curr, int* DC)
 {
     int i;
     memory_word* new_memory_word;
-    int added_mem_words = 0;
 
     for (i = 0; i < strlen(curr->string); i++)
     {
@@ -75,17 +74,17 @@ void add_num_to_data_table(sentence* curr, int* DC, int num_size)
     int i;
     char converted_to_bits[11];
     memory_word* new_memory_word;
+    char array[33] = { 0 };
 
     for (i = 0; i < curr->data_arr_num_of_params; i++)
     {
+        memset(converted_to_bits, 0x00, sizeof(converted_to_bits));
         new_memory_word = (memory_word*)malloc(sizeof(memory_word));
         if (!new_memory_word)
         {
             fprintf(stderr, "Memory allocation for new memory word failed!");
             exit(1);
         }
-
-        char array[33] = { 0 };
         convert_dec_to_x_bit_binary(curr->data_arr[i], num_size * 8 + 1, array);
         reverse_cpy(new_memory_word->bits, array, num_size * 8);
         new_memory_word->address = *DC;

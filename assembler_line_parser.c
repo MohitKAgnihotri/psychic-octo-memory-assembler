@@ -4,7 +4,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "assembler_utility_func.h"
-#include "assembler_error.h"
 #include "assembler_language.h"
 #include "assembler_line_parser.h"
 
@@ -791,17 +790,20 @@ void verify_operands(sentence* parsed, char* line, int last_position, int line_n
 
 sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_errors)
 {
+    int opc;
+    char current_word[80];
+    int last_position = 0;
+    sentence* parsed = NULL;
+
     assert(line);
     assert(syntax_errors);
 
-    char current_word[80];
-    int last_position = 0;
 
-    sentence* parsed = (sentence*)malloc(sizeof(sentence));
+    parsed = (sentence*)malloc(sizeof(sentence));
     if (!parsed)
     {
         printf("FATAL: failed to allocate memory \n");
-        return ASSEMBLER_OUT_OF_MEMORY;
+        return NULL;
     }
 
     if (line_is_empty(line))
@@ -864,7 +866,7 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
     }
 
     /* if first word is not symbol||store_cmd||extern or if first is symbol and second is not store_cmd||extern:*/
-    int opc = detect_opcode(current_word);
+    opc = detect_opcode(current_word);
     if (opc == TRUE)
     {
         parsed->is_action = 1;

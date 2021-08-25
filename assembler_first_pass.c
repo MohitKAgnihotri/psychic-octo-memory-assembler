@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "assembler_line_parser.h"
-#include "assembler_error.h"
 #include "assembler_language.h"
 #include "assembler_symbol_table.h"
 #include "assembler_data_table.h"
@@ -37,7 +36,7 @@ int assembler_execute_first_pass(char* filename)
     if (!fd)
     {
         printf("ERROR: Failed to open file %s\n", filename);
-        return ASSEMBLER_INCORRECT_FILENAME;
+        return -1;
     }
 
     while (fgets(line, LINE_LENGTH, fd))
