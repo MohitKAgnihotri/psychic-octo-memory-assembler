@@ -789,7 +789,7 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
 
     last_position = skip_spaces(line, 0);
 
-    last_position = get_next_word(current_word, line, last_position ? last_position - 1);
+    last_position = get_next_word(current_word, line, last_position ? last_position :  -1);
 
     /*
      * Example of prompt: '.dh', '.dw', '.db', '.asciz'
