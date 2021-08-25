@@ -391,7 +391,7 @@ int assembler_execute_second_pass(char* filename)
         int* test = convert_to_hex(&buffer[index]);
         if (max_bytes_to_print > 4)
         {
-            fprintf(object_filename_fp, "%.4d %.2x %.2x %.2x %.2x \n", ic_second_pass, test[0], test[1], test[2], test[3]);
+            fprintf(object_filename_fp, "%.4d %.2X %.2X %.2X %.2X \n", ic_second_pass, test[0], test[1], test[2], test[3]);
             max_bytes_to_print -= 4;
         }
         else if (max_bytes_to_print == 3)
