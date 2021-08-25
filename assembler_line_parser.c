@@ -584,7 +584,7 @@ void detect_operand(int index,
     int* operands_in_sentence,
     int* temp_operand_type)
 {
-    // Check if it's a positive number or negative number
+    /* Check if it's a positive number or negative number */
     if ((isdigit(temp_word[0])) || (temp_word[0] == '-') || (temp_word[0] == '+'))
     {
         *temp_operand_type = opr_type_immediate;
