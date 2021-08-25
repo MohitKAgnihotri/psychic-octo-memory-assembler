@@ -66,6 +66,7 @@ int assembler_execute_first_pass(char* filename)
                 {
                     fprintf(stderr, "Error in line %d - symbol %s already exists in symbols table\n", line_number, current_sentence
                         ->symbol);
+                    syntax_error = TRUE;
                 }
             }
             /* adding into data table. DC is increased: */

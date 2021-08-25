@@ -367,7 +367,7 @@ int assembler_execute_second_pass(char* filename)
     while (current_memory_word)
     {
         int* test = convert_to_hex(current_memory_word->bits);
-        fprintf(object_filename_fp, "%.4d %.2x %.2x %.2x %.2x \n", current_memory_word
+        fprintf(object_filename_fp, "%.4d %.2X %.2X %.2X %.2X \n", current_memory_word
             ->address, test[0], test[1], test[2], test[3]);
         current_memory_word = current_memory_word->next;
     }
@@ -396,17 +396,17 @@ int assembler_execute_second_pass(char* filename)
         }
         else if (max_bytes_to_print == 3)
         {
-            fprintf(object_filename_fp, "%.4d %.2x %.2x %.2x \n", ic_second_pass, test[0], test[1], test[2]);
+            fprintf(object_filename_fp, "%.4d %.2X %.2X %.2X \n", ic_second_pass, test[0], test[1], test[2]);
             max_bytes_to_print -= 3;
         }
         else if (max_bytes_to_print == 2)
         {
-            fprintf(object_filename_fp, "%.4d %.2x %.2x \n", ic_second_pass, test[0], test[1]);
+            fprintf(object_filename_fp, "%.4d %.2X %.2X \n", ic_second_pass, test[0], test[1]);
             max_bytes_to_print -= 2;
         }
         else if (max_bytes_to_print == 1)
         {
-            fprintf(object_filename_fp, "%.4d %.2x \n", ic_second_pass, test[0]);
+            fprintf(object_filename_fp, "%.4d %.2X \n", ic_second_pass, test[0]);
             max_bytes_to_print -= 1;
         }
         ic_second_pass += 4;
