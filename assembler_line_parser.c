@@ -438,7 +438,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
         number_of_numbers++;
         if (number_of_numbers > 70)
         {
-            fprintf(stderr, "Error: Number of data parameters is greater than 80 \n", line_number);
+            fprintf(stderr, "Error: Number of data parameters is greater than 80 \n");
             *syntax_errors = 1;
             exit(-1);
         }
