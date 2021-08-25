@@ -16,4 +16,3 @@ void add_line_to_file(FILE * fp, char * val, int add);
 void reverse_cpy(char *dst, const char *src, size_t n);
 int * convert_to_hex(char * string);
 #endif //_ASSEMBLER_UTILITY_FUNC_H_
-int
