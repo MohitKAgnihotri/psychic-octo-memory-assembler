@@ -82,9 +82,22 @@ int assembler_execute_first_pass(char* filename)
         {
             if (current_sentence->guidance_command == EXTERN)
             {
-                add_to_symbol_table(current_sentence->symbol, -999, 1, NONE);
+                if (current_sentence->is_symbol == 1)
+                {
+                    if (!assembler_symbol_exists(current_sentence->symbol))
+                    {
+                        add_to_symbol_table(current_sentence->symbol, -999, 1, NONE);
+                    }
+                    else
+                    {
+                        fprintf(stderr, "Error in line %d - symbol %s already exists in symbols table\n", line_number, current_sentence
+                                ->symbol);
+                        syntax_error = TRUE;
+                        return syntax_error;
+                    }
+                }
             }
-            else
+            else if (current_sentence->guidance_command == ENTRY)
             {
                 if (current_sentence->is_symbol == 1)
                 {
@@ -97,12 +110,14 @@ int assembler_execute_first_pass(char* filename)
                         fprintf(stderr, "Error in line %d - symbol %s already exists in symbols table\n", line_number, current_sentence
                             ->symbol);
                         syntax_error = TRUE;
+                        return syntax_error;
                     }
                 }
-
                 /* analyzing sentence so IC is increased by the number of memory words the action sentence takes */
-                if (current_sentence->is_action)
+                else if (current_sentence->is_action)
+                {
                     increase_IC_according_sentence(current_sentence, &IC);
+                }
             }
         }
 

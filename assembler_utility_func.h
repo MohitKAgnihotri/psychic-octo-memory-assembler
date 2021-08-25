@@ -13,6 +13,7 @@ void convert_dec_to_x_bit_binary(int num, int bits, char* result);
 int convert_dec_to_another_base(int number,int base);
 void combine_filename_with_new_file_extension(char * filename, char * output_filename, char * extension);
 void add_line_to_file(FILE * fp, char * val, int add);
-void reverse_cpy(char *restrict dst, const char *restrict src, size_t n);
+void reverse_cpy(char *dst, const char *src, size_t n);
 int * convert_to_hex(char * string);
 #endif //_ASSEMBLER_UTILITY_FUNC_H_
+int

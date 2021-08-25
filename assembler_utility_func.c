@@ -126,7 +126,7 @@ void add_line_to_file(FILE * fp, char * val, int address)
 }
 
 
-void reverse_cpy(char *restrict dst, const char *restrict src, size_t n)
+void reverse_cpy(char *dst, const char *src, size_t n)
 {
     size_t i;
     for (i=0; i < n; ++i)
@@ -136,12 +136,13 @@ void reverse_cpy(char *restrict dst, const char *restrict src, size_t n)
 
 int * convert_to_hex(char * string)
 {
+    int i = 0;
     int *hex_val = malloc(sizeof(int) * 4);
     if (!hex_val)
         return NULL;
     else
     {
-        for (int i = 0; i < 8; i++)
+        for (i = 0; i < 8; i++)
         {
             hex_val[0] = hex_val[0]  + ((string[i] - '0') << i);
             hex_val[1] = hex_val[1]  + ((string[i+8] - '0') << i);

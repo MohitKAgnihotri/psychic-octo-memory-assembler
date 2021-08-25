@@ -45,10 +45,11 @@ extern int registers_table_length;
 
 void encode_instruction_R1(sentence* curr, memory_word* word)
 {
+    int j = 0;
     // 3 operands are expected
     if (curr->operand_type[0] == opr_type_collector)
     {
-        for (int j = 0; j < registers_table_length; j++)
+        for ( j= 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[0]) == 0)
             {
@@ -59,7 +60,7 @@ void encode_instruction_R1(sentence* curr, memory_word* word)
     }
     if (curr->operand_type[1] == opr_type_collector)
     {
-        for (int j = 0; j < registers_table_length; j++)
+        for (j = 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[1]) == 0)
             {
@@ -71,7 +72,7 @@ void encode_instruction_R1(sentence* curr, memory_word* word)
 
     if (curr->operand_type[2] == opr_type_collector)
     {
-        for (int j = 0; j < registers_table_length; j++)
+        for (j = 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[2]) == 0)
             {
@@ -84,10 +85,11 @@ void encode_instruction_R1(sentence* curr, memory_word* word)
 
 void encode_instruction_R2(sentence* curr, memory_word* word)
 {
+    int j = 0;
     // 2 operands are expected
     if (curr->operand_type[0] == opr_type_collector)
     {
-        for (int j = 0; j < registers_table_length; j++)
+        for (j = 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[0]) == 0)
             {
@@ -99,7 +101,7 @@ void encode_instruction_R2(sentence* curr, memory_word* word)
 
     if (curr->operand_type[1] == opr_type_collector)
     {
-        for (int j = 0; j < registers_table_length; j++)
+        for (j = 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[1]) == 0)
             {
@@ -115,10 +117,11 @@ void encode_instruction_R2(sentence* curr, memory_word* word)
 
 void encode_instruction_I1(sentence* curr, memory_word* word)
 {
+    int j = 0;
     // 3 operands are expected
     if (curr->operand_type[0] == opr_type_collector)
     {
-        for (int j = 0; j < registers_table_length; j++)
+        for (j = 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[0]) == 0)
             {
@@ -130,7 +133,7 @@ void encode_instruction_I1(sentence* curr, memory_word* word)
 
     if (curr->operand_type[2] == opr_type_collector)
     {
-        for (int j = 0; j < registers_table_length; j++)
+        for (j = 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[2]) == 0)
             {
@@ -150,10 +153,11 @@ void encode_instruction_I1(sentence* curr, memory_word* word)
 
 void encode_instruction_I2(sentence* curr, memory_word* word)
 {
+    int j = 0;
     // 3 operands are expected
     if (curr->operand_type[0] == opr_type_collector)
     {
-        for (int j = 0; j < registers_table_length; j++)
+        for (j = 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[0]) == 0)
             {
@@ -165,7 +169,7 @@ void encode_instruction_I2(sentence* curr, memory_word* word)
 
     if (curr->operand_type[1] == opr_type_collector)
     {
-        for (int j = 0; j < registers_table_length; j++)
+        for (j = 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[1]) == 0)
             {
@@ -195,11 +199,12 @@ void encode_instruction_I2(sentence* curr, memory_word* word)
 
 void encode_instruction_J1_J2(sentence* curr, memory_word* word)
 {
+    int j = 0;
     // 3 operands are expected
     if (curr->operand_type[0] == opr_type_collector)
     {
         word->bits[25] = '1';
-        for (int j = 0; j < registers_table_length; j++)
+        for (j = 0; j < registers_table_length; j++)
         {
             if (strcmp(registers_table[j].register_name, curr->operand_val[0]) == 0)
             {

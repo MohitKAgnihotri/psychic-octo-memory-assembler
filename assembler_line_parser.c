@@ -15,6 +15,7 @@ extern opcodes opcodes_table[];
 
 void init_sentence(sentence* parsed)
 {
+    int i = 0;
     parsed->is_symbol = 0;
     parsed->is_action = 0;
     parsed->is_store_command = -1;
@@ -28,7 +29,7 @@ void init_sentence(sentence* parsed)
     memset(parsed->operand, 0, 3 * sizeof(int));
     strcpy(parsed->string, "\0");
 
-    for (int i = 0; i < MAX_DATA_ARR_SIZE; i++)
+    for (i = 0; i < MAX_DATA_ARR_SIZE; i++)
     {
         parsed->data_arr[i] = 0;
     }
