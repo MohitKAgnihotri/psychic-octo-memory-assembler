@@ -614,16 +614,22 @@ void detect_operand(int index,
         strcpy(parsed->operand_val[index], temp_word);
         parsed->operand_type[index] = opr_type_direct;
     }
-    else if (temp_word[0] == '$' && valid_reg_digit(&temp_word[1]))
+    else if (temp_word[0] == '$')
     {
-        if (strlen(temp_word) >= 2 && strlen(temp_word) <= 3)
-        {
-            *temp_operand_type = opr_type_collector;
-            *operands_in_sentence = *operands_in_sentence + 1;
+        if (valid_reg_digit(&temp_word[1])) {
+            if (strlen(temp_word) >= 2 && strlen(temp_word) <= 3) {
+                *temp_operand_type = opr_type_collector;
+                *operands_in_sentence = *operands_in_sentence + 1;
 
-            strcpy(parsed->operand_val[index], temp_word);
-            parsed->operand_type[index] = opr_type_collector;
-            parsed->operand[index] = atoi(&temp_word[1]);
+                strcpy(parsed->operand_val[index], temp_word);
+                parsed->operand_type[index] = opr_type_collector;
+                parsed->operand[index] = atoi(&temp_word[1]);
+            }
+        } else
+        {
+            fprintf(stderr, "Error in line %d - incorrect register number %s\n", line_number, temp_word);
+            *syntax_errors = 1;
+            return;
         }
     }
     return;
