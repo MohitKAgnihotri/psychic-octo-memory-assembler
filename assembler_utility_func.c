@@ -142,6 +142,7 @@ int * convert_to_hex(char * string)
         return NULL;
     else
     {
+        memset(hex_val, 0x00, sizeof(int) * 4);
         for (i = 0; i < 8; i++)
         {
             hex_val[0] = hex_val[0]  + ((string[i] - '0') << i);

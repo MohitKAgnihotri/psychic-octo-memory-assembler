@@ -97,3 +97,15 @@ int assembler_symbol_exists(char* current_symbol)
     }
     return FALSE;
 }
+
+void free_symbol_list( void ) {
+    symbol_line* item = NULL;
+    while(symbol_head)
+    {
+        item = symbol_head;
+        symbol_head = symbol_head->next;
+        free(item);
+    }
+    symbol_head = NULL;
+    symbol_tail = NULL;
+}

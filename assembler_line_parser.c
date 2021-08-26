@@ -26,7 +26,7 @@ void init_sentence(sentence* parsed)
     memset(parsed->operand_type, 0, 3 * sizeof(int));
     memset(parsed->operand_val, 0, 3 * MAX_REGISTER_SIZE * sizeof(char));
     memset(parsed->operand, 0, 3 * sizeof(int));
-    strcpy(parsed->string, "\0");
+    memset(parsed->string, 0x00, sizeof(parsed->string));
 
     for (i = 0; i < MAX_DATA_ARR_SIZE; i++)
     {

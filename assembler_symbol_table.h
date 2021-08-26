@@ -16,5 +16,6 @@ void add_to_symbol_table(char* current_symbol, int address, int is_extern, int s
 int assembler_symbol_exists(char *current_symbol);
 void increase_DC_symbol_address_by_IC_offset(const int *IC);
 symbol_line * get_symbol_line_from_symbol_table(char * symbol);
+void free_symbol_list( void );
 
 #endif

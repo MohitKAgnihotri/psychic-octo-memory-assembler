@@ -4,9 +4,16 @@
 #include "assembler_language.h"
 #include "assembler_first_pass.h"
 #include "assembler_second_pass.h"
+#include "assembler_code_table.h"
+#include "assembler_data_table.h"
+#include "assembler_symbol_table.h"
+#include "assembler_first_pass.h"
 #include "assembler.h"
 
 #define ASSEMBLY_FILE_EXTENSION ".as"
+
+int IC;
+int DC;
 
 int main(int argc, char* argv[])
 {
@@ -51,6 +58,8 @@ int main(int argc, char* argv[])
 
     for (i = 1; i < argc; i++)
     {
+        IC = 100;
+        DC = 0;
         char* filename = argv[i];
         printf("INFO: Running assembler on file %s\n", filename);
         if (assembler_execute_first_pass(filename) != TRUE)
@@ -65,6 +74,11 @@ int main(int argc, char* argv[])
         {
             fprintf(stderr, "ERROR: Errors found in first pass. Second pass will not be run.\n");
         }
+
+        free_code_list();
+        free_data_list();
+        free_symbol_list();
+        free_sentence_list();
     }
 
     return 0;

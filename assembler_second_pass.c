@@ -333,11 +333,11 @@ int assembler_execute_second_pass(char* filename)
     combine_filename_with_new_file_extension(input_filename, extern_filename, EXTERN_FILE_EXTENSION);
     combine_filename_with_new_file_extension(input_filename, intern_filename, ENTRY_FILE_EXTENSION);
 
-    object_filename_fp = fopen(object_filename, "w+");
+    object_filename_fp = fopen(object_filename, "w");
     assert(object_filename_fp);
-    extern_filename_fp = fopen(extern_filename, "w+");
+    extern_filename_fp = fopen(extern_filename, "w");
     assert(extern_filename_fp);
-    intern_filename_fp = fopen(intern_filename, "w+");
+    intern_filename_fp = fopen(intern_filename, "w");
     assert(intern_filename_fp);
 
 
@@ -381,13 +381,17 @@ int assembler_execute_second_pass(char* filename)
         int* test = convert_to_hex(current_memory_word->bits);
         fprintf(object_filename_fp, "%.4d %.2X %.2X %.2X %.2X \n", current_memory_word
             ->address, test[0], test[1], test[2], test[3]);
+        free(test);
         current_memory_word = current_memory_word->next;
     }
 
     /*Add Data to the binary image*/
     curr_data_head = data_head;
 
-    buffer = malloc(sizeof(char) * DC * 8);
+
+    buffer = malloc(sizeof(char) * (DC + 4) * 8);
+    memset(buffer, 0x00, sizeof(char) * (DC + 4) * 8);
+
     index = 0;
     while (curr_data_head)
     {
@@ -423,8 +427,10 @@ int assembler_execute_second_pass(char* filename)
         }
         ic_second_pass += 4;
         index += 32;
+        free(test);
     }
 
+    free(buffer);
     fclose(intern_filename_fp);
     fclose(extern_filename_fp);
     fclose(object_filename_fp);

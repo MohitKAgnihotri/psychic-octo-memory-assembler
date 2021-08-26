@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <malloc.h>
 #include "assembler_line_parser.h"
 #include "assembler_language.h"
 #include "assembler_symbol_table.h"
@@ -8,11 +9,24 @@
 
 #define LINE_LENGTH 256
 
-int IC = 100;
-int DC = 0;
-
 sentence* sentence_head;
 sentence* sentence_tail;
+
+extern int DC;
+extern int IC;
+
+void free_sentence_list(void )
+{
+    sentence* item = NULL;
+    while(sentence_head)
+    {
+        item = sentence_head;
+        sentence_head = sentence_head->next;
+        free(item);
+    }
+    sentence_head = NULL;
+    sentence_tail = NULL;
+}
 
 /* increase_IC_according_sentence -
    receives: the current sentence (the line after it was parsed) and checks for source and destination operands.

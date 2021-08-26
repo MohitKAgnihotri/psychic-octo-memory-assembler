@@ -137,3 +137,15 @@ void add_to_data_table(sentence* curr, int* DC)
     return;
 
 }
+
+void free_data_list( void ) {
+    memory_word * item = NULL;
+    while(data_head)
+    {
+        item = data_head;
+        data_head = data_head->next;
+        free(item);
+    }
+    data_head = NULL;
+    data_tail = NULL;
+}
