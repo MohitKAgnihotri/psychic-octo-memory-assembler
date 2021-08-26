@@ -136,8 +136,17 @@ int is_symbol(char* current_word, int line_number, int* syntax_errors, int begin
         if (length > 30)
         {
             fprintf(stderr, "Error in line %d - The word is too long to be a symbol\n", line_number);
+            *syntax_errors = TRUE;
             return FALSE;
         }
+
+        if (!is_alphanumeric(current_word))
+        {
+            fprintf(stderr, "Error in line %d - Label contains invalid characters \n", line_number);
+            *syntax_errors = TRUE;
+            return FALSE;
+        }
+
         if (current_word[length - 1] == ':')
         {
             current_word[length - 1] = '\0';
