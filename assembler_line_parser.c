@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "assembler_utility_func.h"
 #include "assembler_language.h"
 #include "assembler_line_parser.h"
@@ -447,7 +448,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
         number = atoi(temp_member);
         if (parsed->guidance_command == NUM_1)
         {
-            if (number > 127 || number < -128)
+            if (number > SCHAR_MAX || number < SCHAR_MIN)
             {
                 fprintf(stderr,
                     "Error in line %d - the range of numbers that can be translated with assembler that works with 8 bits is from -128 to 127. Number %d cannot be stored.\n",
@@ -462,7 +463,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
         }
         else if (parsed->guidance_command == NUM_2)
         {
-            if (number > 32767 || number < -32768)
+            if (number > SHRT_MAX || number < SHRT_MIN)
             {
                 fprintf(stderr,
                     "Error in line %d - the range of numbers that can be translated with assembler that works with 16 bits is from -32768 to 32767. Number %d cannot be stored.\n",
@@ -478,7 +479,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
         }
         else if (parsed->guidance_command == NUM_4)
         {
-            if (number > 2147483647 || number < -2147483648)
+            if (number > INT_MAX || number < INT_MIN)
             {
                 fprintf(stderr,
                     "Error in line %d - the range of numbers that can be translated with assembler that works with 32 bits is from -2147483648 to 2147483647. Number %d cannot be stored.\n",
@@ -874,7 +875,6 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
     }
 
     /* if first word is not symbol||store_cmd||extern or if first is symbol and second is not store_cmd||extern:*/
-
     opc = detect_opcode(current_word);
     if (opc == TRUE)
     {
@@ -882,11 +882,5 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
         strcpy(parsed->opcode, current_word);
         verify_operands(parsed, line, last_position, line_number, syntax_errors);
     }
-    else
-    {
-        fprintf(stderr, "Error in line %d: Incorrect Opcode found : %s \n", line_number, current_word);
-        *syntax_errors = TRUE;
-    }
-
     return parsed;
 }
