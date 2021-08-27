@@ -882,6 +882,11 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
         strcpy(parsed->opcode, current_word);
         verify_operands(parsed, line, last_position, line_number, syntax_errors);
     }
+    else
+    {
+        fprintf(stderr, "Error in line %d: Incorrect Opcode found : %s \n", line_number, current_word);
+        *syntax_errors = TRUE;
+    }
 
     return parsed;
 }
