@@ -544,7 +544,7 @@ int is_extern_or_entry_command(char* current_word)
 /* detect_opcode -
 	receives: a pointer to the current word.
 	returns: TRUE if the current word is an opcode, FALSE if it isn't. */
-int detect_opcode(char* current_word)
+int detect_opcode(char* current_word, int *opcode_index)
 {
 
     int opcode_idx = 0;
@@ -552,8 +552,10 @@ int detect_opcode(char* current_word)
     while (opcode_idx < opcode_table_length)
     {
         if (strcmp_lower(current_word, opcodes_table[opcode_idx].opcode) == 0)
+        {
+            opcode_index = opcode_idx;
             return TRUE;
-
+        }
         opcode_idx++;
     }
     return FALSE;
@@ -801,6 +803,7 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
     char current_word[80];
     int last_position = 0;
     sentence* parsed = NULL;
+    int opcode_index = -1;
 
     assert(line);
     assert(syntax_errors);
@@ -831,13 +834,6 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
 
     if (is_symbol(current_word, line_number, syntax_errors, TRUE, TRUE))
     {
-        if (!right_symbol_identation(line))
-        {
-            fprintf(stderr, "Error in line %d - symbol doesn't start in 1st column\n", line_number);
-            *syntax_errors = TRUE;
-            return parsed;
-        }
-
         if (!is_alphanumeric(current_word))
         {
             fprintf(stderr, "Error in line %d - Symbol/Label contains invalid characters \n", line_number);
@@ -881,12 +877,22 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
     }
 
     /* if first word is not symbol||store_cmd||extern or if first is symbol and second is not store_cmd||extern:*/
-    opc = detect_opcode(current_word);
+
+    opc = detect_opcode(current_word, &opcode_index);
     if (opc == TRUE)
     {
         parsed->is_action = 1;
         strcpy(parsed->opcode, current_word);
         verify_operands(parsed, line, last_position, line_number, syntax_errors);
+
+        if (opcode_index != -1)
+        {
+            if (opcodes_table[opcode_index].instruction_type == ins_type_I_2)
+            {
+
+            }
+        }
+
     }
 
     return parsed;
