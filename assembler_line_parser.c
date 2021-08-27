@@ -544,16 +544,13 @@ int is_extern_or_entry_command(char* current_word)
 /* detect_opcode -
 	receives: a pointer to the current word.
 	returns: TRUE if the current word is an opcode, FALSE if it isn't. */
-int detect_opcode(char* current_word, int *opcode_index)
+int detect_opcode(char* current_word)
 {
-
     int opcode_idx = 0;
-
     while (opcode_idx < opcode_table_length)
     {
         if (strcmp_lower(current_word, opcodes_table[opcode_idx].opcode) == 0)
         {
-            opcode_index = opcode_idx;
             return TRUE;
         }
         opcode_idx++;
@@ -878,21 +875,12 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
 
     /* if first word is not symbol||store_cmd||extern or if first is symbol and second is not store_cmd||extern:*/
 
-    opc = detect_opcode(current_word, &opcode_index);
+    opc = detect_opcode(current_word);
     if (opc == TRUE)
     {
         parsed->is_action = 1;
         strcpy(parsed->opcode, current_word);
         verify_operands(parsed, line, last_position, line_number, syntax_errors);
-
-        if (opcode_index != -1)
-        {
-            if (opcodes_table[opcode_index].instruction_type == ins_type_I_2)
-            {
-
-            }
-        }
-
     }
 
     return parsed;

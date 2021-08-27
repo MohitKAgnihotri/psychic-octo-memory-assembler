@@ -184,10 +184,9 @@ void encode_instruction_I2(sentence* curr, memory_word* word)
         symbol_line* sl = get_symbol_line_from_symbol_table(curr->operand_val[2]);
         if (sl && sl->is_extern)
         {
-            sl->address = ic_second_pass;
-            keep_ext_file = 1;
-            add_line_to_file(extern_filename_fp, sl->symbol, ic_second_pass);
-            memcpy(&word->bits[0], "0000000000000000", 16);
+            fprintf(stderr, "extern symbol is NOT allowed for opcode %s\n", curr->opcode);
+            fprintf(stderr, "Error: Second pass encountered error, can't continue.. Exiting");
+            exit(-1);
         }
         else
         {
