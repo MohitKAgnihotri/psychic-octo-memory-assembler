@@ -451,7 +451,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
             if (number > 127 || number < -128)
             {
                 fprintf(stderr,
-                    "Error in line %d - the range of numbers that can be translated with assembler that works with 10 bits is from -512 to 511. Number %d cannot be stored.\n",
+                    "Error in line %d - the range of numbers that can be translated with assembler that works with 8 bits is from -128 to 127. Number %d cannot be stored.\n",
                     line_number,
                     number);
                 *syntax_errors = 1;
@@ -466,7 +466,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
             if (number > 32767 || number < -32768)
             {
                 fprintf(stderr,
-                    "Error in line %d - the range of numbers that can be translated with assembler that works with 10 bits is from -512 to 511. Number %d cannot be stored.\n",
+                    "Error in line %d - the range of numbers that can be translated with assembler that works with 16 bits is from -32768 to 32767. Number %d cannot be stored.\n",
                     line_number,
                     number);
                 *syntax_errors = 1;
@@ -482,7 +482,7 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
             if (number > 2147483647 || number < -2147483648)
             {
                 fprintf(stderr,
-                    "Error in line %d - the range of numbers that can be translated with assembler that works with 10 bits is from -512 to 511. Number %d cannot be stored.\n",
+                    "Error in line %d - the range of numbers that can be translated with assembler that works with 32 bits is from -2147483648 to 2147483647. Number %d cannot be stored.\n",
                     line_number,
                     number);
                 *syntax_errors = 1;

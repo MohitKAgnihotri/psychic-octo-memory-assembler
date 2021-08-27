@@ -187,6 +187,7 @@ void encode_instruction_I2(sentence* curr, memory_word* word)
             sl->address = ic_second_pass;
             keep_ext_file = 1;
             add_line_to_file(extern_filename_fp, sl->symbol, ic_second_pass);
+            memcpy(&word->bits[0], "0000000000000000", 16);
         }
         else
         {

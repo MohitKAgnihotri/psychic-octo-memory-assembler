@@ -55,12 +55,6 @@ int assembler_execute_first_pass(char* filename)
 
     while (fgets(line, LINE_LENGTH, fd))
     {
-        /* Check if the last line was parsed without errors*/
-        if (syntax_error == TRUE)
-        {
-            return syntax_error;
-        }
-
         line_number++;
         if (line[0] == ';')
         {
@@ -130,7 +124,6 @@ int assembler_execute_first_pass(char* filename)
             sentence_tail = sentence_tail->next;
         }
     }
-
 
     /* updating the DC address of each entry in symbol_table with the IC offset, only when 													the symbol is of DATA type */
     increase_DC_symbol_address_by_IC_offset(&IC);
