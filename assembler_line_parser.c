@@ -441,7 +441,6 @@ void verify_and_save_numbers(sentence* parsed, char* line, int last_position, in
         {
             fprintf(stderr, "Error: Number of data parameters is greater than 80 \n");
             *syntax_errors = 1;
-            exit(-1);
         }
 
         new_position = get_next_member(temp_member, line, line_number, new_position, syntax_errors, &expecting_comma);
@@ -838,6 +837,14 @@ sentence* assembler_parse_sentence(char* line, int line_number, int* syntax_erro
             *syntax_errors = TRUE;
             return parsed;
         }
+
+        if (!is_alphanumeric(current_word))
+        {
+            fprintf(stderr, "Error in line %d - Symbol/Label contains invalid characters \n", line_number);
+            *syntax_errors = TRUE;
+            return parsed;
+        }
+
         parsed->is_symbol = 1;
         strcpy(parsed->symbol, current_word);
         last_position = get_next_word(current_word, line, last_position);
