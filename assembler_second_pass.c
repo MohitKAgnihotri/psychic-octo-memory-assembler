@@ -27,6 +27,9 @@ extern int DC;
 FILE* object_filename_fp = NULL;
 FILE* extern_filename_fp = NULL;
 FILE* intern_filename_fp = NULL;
+char object_filename[MAX_FILE_NAME_SIZE] = { 0 };
+char extern_filename[MAX_FILE_NAME_SIZE] = { 0 };
+char intern_filename[MAX_FILE_NAME_SIZE] = { 0 };
 
 extern sentence* sentence_head;
 extern sentence* sentence_tail;
@@ -42,6 +45,8 @@ extern int opcode_table_length;
 
 extern registers registers_table[];
 extern int registers_table_length;
+
+void exit_gracefully(void);
 
 void encode_instruction_R1(sentence* curr, memory_word* word)
 {
@@ -186,7 +191,7 @@ void encode_instruction_I2(sentence* curr, memory_word* word)
         {
             fprintf(stderr, "extern symbol is NOT allowed for opcode %s\n", curr->opcode);
             fprintf(stderr, "Error: Second pass encountered error, can't continue.. Exiting");
-            exit(-1);
+            exit_gracefully();
         }
         else
         {
@@ -238,7 +243,7 @@ void encode_instruction_J1_J2(sentence* curr, memory_word* word)
         else
         {
             fprintf(stderr, "ERROR: Second PASS Can't Continue.. Exiting \n");
-            exit(-1);
+            exit_gracefully();
         }
     }
 }
@@ -312,9 +317,7 @@ void encode_instruction(sentence* curr)
 int assembler_execute_second_pass(char* filename)
 {
     char input_filename[MAX_FILE_NAME_SIZE] = { 0 };
-    char object_filename[MAX_FILE_NAME_SIZE] = { 0 };
-    char extern_filename[MAX_FILE_NAME_SIZE] = { 0 };
-    char intern_filename[MAX_FILE_NAME_SIZE] = { 0 };
+
 
     memory_word* current_memory_word = NULL;
     memory_word* curr_data_head = NULL;
@@ -444,4 +447,17 @@ int assembler_execute_second_pass(char* filename)
         remove(intern_filename);
     }
     return 0;
+}
+
+void exit_gracefully(void)
+{
+    fclose(intern_filename_fp);
+    fclose(extern_filename_fp);
+    fclose(object_filename_fp);
+    remove(extern_filename);
+    remove(intern_filename);
+    remove(object_filename);
+
+    exit(-1);
+
 }
